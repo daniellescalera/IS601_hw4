@@ -1,38 +1,56 @@
-"""This module contains the main functionality for the calculator application."""
+"""This module runs the interactive calculator program."""
+from calculator.history import History
 from calculator.operations import Operations
-from calculator.history import CalculationHistory
 from calculator.calculations import Calculation
 
 def main():
-    #Interactive calculator program with decimal and whole number support.
+    #calculator program that supports decimal and whole numbers
     while True:
         print("\n🔢 Simple Calculator 🔢")
-        print("Choose an operation: add, subtract, multiply, divide, history")
-        print("Type 'exit' to quit.")
+        print("Enter two numbers first, then choose an operation.")
+        print("Type 'exit' at any time to quit.")
 
+        # Get user input for numbers first (allow "exit" to quit)
+        num1_input = input("Enter the first number: ").strip().lower()
+        if num1_input == "exit":
+            print("Goodbye! 👋")
+            break  # Exit the loop
+
+        num2_input = input("Enter the second number: ").strip().lower()
+        if num2_input == "exit":
+            print("Goodbye! 👋")
+            break
+
+        # Get user input for operation
+        print("\nChoose an operation: add, subtract, multiply, divide, history")
         operation = input("Enter operation: ").strip().lower()
 
         if operation == "exit":
             print("Goodbye! 👋")
-            break  # Exit the loop
+            break
 
         if operation == "history":
-            last_calc = CalculationHistory.get_last_calculation()
+            last_calc = History.get_last_calculation()
             if last_calc:
                 print(f"📜 Last Calculation: {last_calc}")
             else:
                 print("📜 No calculations in history yet.")
-            continue
+            continue  # Restart loop to ask for numbers again
 
         if operation not in ["add", "subtract", "multiply", "divide"]:
-            print("❌ Invalid operation. Please try again.")
+            print(f"❌ Unknown operation: {operation}")  # Handle unknown operations
             continue
 
+        # Try converting numbers to float AFTER the operation is entered
         try:
-            num1 = input("Enter first number: ").strip()
-            num2 = input("Enter second number: ").strip()
+            num1 = float(num1_input)
+            num2 = float(num2_input)
+        except ValueError:
+            print(f"❌ Invalid number input: {num1_input} or {num2_input} is not a valid number.")
+            continue  # Restart loop
 
-            # Perform the selected operation using Decimal numbers
+        # Perform the selected operation
+        try:
             if operation == "add":
                 result = Operations.add(num1, num2)
             elif operation == "subtract":
@@ -40,16 +58,16 @@ def main():
             elif operation == "multiply":
                 result = Operations.multiply(num1, num2)
             elif operation == "divide":
+                if num2 == 0:
+                    raise ZeroDivisionError("Cannot divide by zero") #divide by zero is not allowed
                 result = Operations.divide(num1, num2)
 
-            # Create a calculation instance and add it to history
-            calculation = Calculation(operation, float(num1), float(num2))
-            CalculationHistory.add_calculation(calculation)
+            # Create a Calculation instance and add it to history
+            calculation = Calculation(num1, num2, operation, result)  # Correct for how we want to input our numbers
+            History.add_calculation(num1, num2, operation, result)
 
-            print(f"✅ Result: {result}")
+            print(f"✅ Result: {num1} {operation} {num2} = {result}")
 
-        except ValueError:
-            print("❌ Invalid input. Please enter valid numbers.")
         except ZeroDivisionError as e:
             print(f"❌ Error: {e}")
 

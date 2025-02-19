@@ -1,24 +1,27 @@
+#this file manages the history of calculations
+from typing import List, Tuple, Optional
+from decimal import Decimal
 
-from typing import List
-from calculator.calculations import Calculation
 
-class CalculationHistory:
-    #manages the history of the calculations. 
-    _history: List[Calculation] = []
-
-    @classmethod
-    def add_calculation(cls, calculation: Calculation):
-        """Stores a calculation in history."""
-        cls._history.append(calculation)
+class History:
+    _history = []  
 
     @classmethod
-    def get_last_calculation(cls) -> Calculation:
-        #Returns the last calculation performed.
-        if cls._history:
-            return cls._history[-1]
-        return None
+    def add_calculation(cls, a, operation, b, result):
+        #adds calculation to history
+        cls._history.append((a, operation, b, result))
+
+    @classmethod
+    def get_last_calculation(cls):
+        #returns last calculation if there is one
+        return cls._history[-1] if cls._history else None
+
+    @classmethod
+    def get_all_history(cls):
+        #returns all stored calculations
+        return cls._history
 
     @classmethod
     def clear_history(cls):
-        #Clears all calculation history.
+        #clears the calculation history
         cls._history.clear()

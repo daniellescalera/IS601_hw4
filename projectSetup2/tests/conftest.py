@@ -1,12 +1,22 @@
-"""This module contains the main functionality for the calculator application."""
+"""This module contains pytest fixtures for test setup."""
+from decimal import Decimal
 import pytest
-from calculator.calculations import Calculation
-from calculator.history import CalculationHistory
+from calculator.history import History
+from calculator.operations import Operations
 
 @pytest.fixture
 def sample_calculations():
-    """Provides sample calculations for testing."""
-    CalculationHistory.clear_history()
-    CalculationHistory.add_calculation(Calculation("add", 3, 2))
-    CalculationHistory.add_calculation(Calculation("multiply", 4, 2))
-    return CalculationHistory
+    """Fixture to add sample calculations to history for testing."""
+    History.clear_history()  # Reset history before tests
+
+    calculations = [
+        (Decimal(2), "add", Decimal(3), Operations.add(Decimal(2), Decimal(3))),
+        (Decimal(10), "subtract", Decimal(4), Operations.subtract(Decimal(10), Decimal(4))),
+        (Decimal(5), "multiply", Decimal(5), Operations.multiply(Decimal(5), Decimal(5))),
+        (Decimal(20), "divide", Decimal(5), Operations.divide(Decimal(20), Decimal(5)))
+    ]
+
+    for calc in calculations:
+        History.add_calculation(*calc)
+
+    return calculations  #Return sample calculations if needed in tests

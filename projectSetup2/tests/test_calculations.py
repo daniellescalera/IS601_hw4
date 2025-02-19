@@ -18,8 +18,9 @@ def test_zero_division():
         Operations.divide(5, 0)
 
 def test_calculation():
-    #Test calculation wrapper.
-    calc = Calculation("add", 2, 3)
+    # Test calculation wrapper.
+    calc = Calculation(2, 3, "add", 5)
+    assert calc.a == 2
+    assert calc.b == 3
+    assert calc.operation == "add"
     assert calc.result == 5
-    calc = Calculation("multiply", 2, 3)
-    assert calc.result == 6
